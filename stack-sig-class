@@ -31,7 +31,7 @@ class StackTool(object):
         param1 = arcpy.Parameter(
             displayName="Stack File",
             name="raster_stack",
-            datatype=["GPRasterDataLayer"],
+            datatype=["DEFile"],
             parameterType="Derived",
             direction="Output")
         params = [param0, param1]
