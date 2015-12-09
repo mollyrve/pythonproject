@@ -1,4 +1,7 @@
-# pythonproject
+
 This details the final project for WILD 6900, Programming with Python, at Utah State University.
-There are three components to this project: a Python Toolbox with three individual tools, a Python Add-In and a Wiki page that gives additional helpful information when running these tools.
+There are three components to this project: 
+- a Python Toolbox with three individual tools (https://github.com/mollyrve/pythonproject/blob/master/stack-sig-class)
+- a Python Add-In (https://github.com/mollyrve/pythonproject/blob/master/add-in-ice)
+- a Wiki page that gives additional helpful information when running these tools. (https://github.com/mollyrve/pythonproject/wiki/Project-Details)
 This project was completed by Molly Van Engelenhoven on December 8, 2015.
