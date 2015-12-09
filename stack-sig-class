@@ -1,0 +1,172 @@
+import arcpy
+from arcpy.sa import *
+
+class Toolbox(object):
+    def __init__(self):
+        """Define the toolbox (the name of the toolbox is the name of the
+        .pyt file)."""
+        self.label = "Satellite Image Stack and Signature"
+        self.alias = "stack_sig"
+
+        # List of tool classes associated with this toolbox
+        self.tools = [StackTool, SignatureTool, ClassificationTool] 
+
+
+class StackTool(object):
+    def __init__(self):
+        """Define the tool (tool name is the name of the class)."""
+        self.label = "Stack and SignatureTool"
+        self.description = "Stacks tiffs and creates their signature file"
+        self.canRunInBackground = False
+    def getParameterInfo(self):
+        """Define parameter definitions"""
+         # folder parameter 
+        param0 = arcpy.Parameter(
+            displayName="Input Dataset",
+            name="input_folder",
+            datatype=["DEWorkspace"],
+            parameterType="Required",
+            direction="Input")
+        #output parameter - stacked TIF 
+        param1 = arcpy.Parameter(
+            displayName="Stack File",
+            name="raster_stack",
+            datatype=["GPRasterDataLayer"],
+            parameterType="Derived",
+            direction="Output")
+        params = [param0, param1]
+        return params
+
+    def isLicensed(self):
+        """Set whether tool is licensed to execute."""
+        return True
+
+    def updateParameters(self, parameters):
+        """Modify the values and properties of parameters before internal
+        validation is performed.  This method is called whenever a parameter
+        has been changed."""
+        return
+
+    def updateMessages(self, parameters):
+        """Modify the messages created by internal validation for each tool
+        parameter.  This method is called after internal validation."""
+        return
+
+    def execute(self, parameters, messages):
+        """The source code of the tool."""
+        foldername = parameters[0].valueAsText
+        output = parameters[1].valueAsText
+         #set the workspace as the geodatabase
+        arcpy.env.workspace = foldername
+    #find all TIF Files
+        bands = arcpy.ListRasters("*", "TIF")
+        new_bands = []
+        for band in bands:
+            if not 'BQA' in band and not 'B8' in band:
+                new_bands.append(band)
+        for band in new_bands:
+            messages.addMessage(band)
+        arcpy.CompositeBands_management(new_bands, output)
+
+        return
+
+class SignatureTool(object):
+    def __init__(self):
+        """Define the tool (tool name is the name of the class)."""
+        self.label = "Signature Tool"
+        self.description = "Create Signature File from stacked image"
+        self.canRunInBackground = False
+    def getParameterInfo(self):
+        """Define parameter definitions"""
+         # stacked file 
+        param0 = arcpy.Parameter(
+            displayName="Input Image (Stacked File)",
+            name="input_image",
+            datatype=["DEFile"],
+            parameterType="Required",
+            direction="Input")
+        #output parameter - signature file 
+        param1 = arcpy.Parameter(
+            displayName="Signature File",
+            name="signatures",
+            datatype=["DEFile"],
+            parameterType="Derived",
+            direction="Output")
+        params = [param0, param1]
+        return params
+
+    def isLicensed(self):
+        """Set whether tool is licensed to execute."""
+        return True
+
+    def updateParameters(self, parameters):
+        """Modify the values and properties of parameters before internal
+        validation is performed.  This method is called whenever a parameter
+        has been changed."""
+        return
+
+    def updateMessages(self, parameters):
+        """Modify the messages created by internal validation for each tool
+        parameter.  This method is called after internal validation."""
+        return
+
+    def execute(self, parameters, messages):
+        """The source code of the tool."""
+        input_image = parameters[0].valueAsText
+        output_image = parameters[1].valueAsText
+        IsoCluster(input_image, output_image,3,20,50,15)
+
+
+        return
+class ClassificationTool(object):
+    def __init__(self):
+        """Define the tool (tool name is the name of the class)."""
+        self.label = "Classification Tool"
+        self.description = "Classify the stack based on the spectral signatures"
+        self.canRunInBackground = False
+    def getParameterInfo(self):
+        """Define parameter definitions"""
+         # stacked file 
+        param0 = arcpy.Parameter(
+            displayName="Input Image (Stacked File)",
+            name="input_image",
+            datatype=["DEFile"],
+            parameterType="Required",
+            direction="Input")
+        param1 = arcpy.Parameter(
+            displayName="Signature File",
+            name="signature file",
+            datatype=["DEFile"],
+            parameterType="Required",
+            direction="Input")
+        #output parameter - signature file 
+        param2 = arcpy.Parameter(
+            displayName="Classified File",
+            name="MLC file",
+            datatype=["GPRasterDataLayer"],
+            parameterType="Derived",
+            direction="Output")
+        params = [param0, param1, param2]
+        return params
+
+    def isLicensed(self):
+        """Set whether tool is licensed to execute."""
+        return True
+
+    def updateParameters(self, parameters):
+        """Modify the values and properties of parameters before internal
+        validation is performed.  This method is called whenever a parameter
+        has been changed."""
+        return
+
+    def updateMessages(self, parameters):
+        """Modify the messages created by internal validation for each tool
+        parameter.  This method is called after internal validation."""
+        return
+
+    def execute(self, parameters, messages):
+        """The source code of the tool."""
+        input_raster = parameters[0].valueAsText
+        sig_file = parameters [1].valueAsText
+        output_file = parameters [2].valueAsText
+        MLClassify(input_raster, sig_file, output_file) 
