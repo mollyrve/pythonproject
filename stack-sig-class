@@ -62,7 +62,7 @@ class StackTool(object):
         bands = arcpy.ListRasters("*", "TIF")
         new_bands = []
         for band in bands:
-            if not 'BQA' in band and not 'B8' in band:
+            if not 'BQA' in band and not 'B8' in band and not 'B10' in band and not 'B11' in band:
                 new_bands.append(band)
         for band in new_bands:
             messages.addMessage(band)
