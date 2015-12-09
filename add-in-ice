@@ -47,9 +47,8 @@ class class_count(object):
 #        #define what operation the rectangle should compute regarding the pixels
                 total_ice =(array==3).sum()
                 total_water = (array==2).sum()
-                percent = ((total_ice)/(total_water+total_ice))*100
 #         #create solution message for the user 
-                msg = '{0}% pixels are ice'.format(percent)
+                msg = '{0} pixels are ice, {1} pixels are water'.format(total_ice, total_water)
                 pythonaddins.MessageBox(msg, 'Ice Abundance')
                 # if the file is not a raster, print an error message 
             else:
