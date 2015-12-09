@@ -4,7 +4,7 @@ import pythonaddins
 import numpy as np
 
 
-class class_count(object):
+class ice_count(object):
     """Implementation for addin_storage_addin.tool (Tool)"""
     def __init__(self):
         self.enabled = True
