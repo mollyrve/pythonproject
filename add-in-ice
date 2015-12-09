@@ -44,10 +44,12 @@ class class_count(object):
                 rectExtract= arcpy.sa.ExtractByRectangle(lyr,rectangle_geometry)
             #convert the rectangle to a numpy array 
                 array=arcpy.RasterToNumPyArray(rectExtract)
-#        #define what operation the rectangle should compute regarding the pixels, make it a percent 
-                total =(array==3).sum()
+#        #define what operation the rectangle should compute regarding the pixels
+                total_ice =(array==3).sum()
+                total_water = (array==2).sum()
+                percent = ((total_ice)/(total_water+total_ice))*100
 #         #create solution message for the user 
-                msg = '{0} pixels are ice'.format(total)
+                msg = '{0}% pixels are ice'.format(percent)
                 pythonaddins.MessageBox(msg, 'Ice Abundance')
                 # if the file is not a raster, print an error message 
             else:
