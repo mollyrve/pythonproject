@@ -34,7 +34,7 @@ class Water_count(object):
         pass
     def onRectangle(self, rectangle_geometry):
         pass
-            #get selected layer
+ #get selected layer
         lyr = pythonaddins.GetSelectedTOCLayerOrDataFrame()
 ##check to see if layer is a raster 
         if isinstance(lyr, arcpy.mapping.Layer):
@@ -44,9 +44,10 @@ class Water_count(object):
             #convert the rectangle to a numpy array 
                 array=arcpy.RasterToNumPyArray(rectExtract)
 #        #define what operation the rectangle should compute regarding the pixels, make it a percent 
+                total_ice =(array==3).sum()
                 total_water =(array==2).sum()
 #         #create solution message for the user 
-                msg = '{0} pixels are water'.format(total_water)
+                msg = '{0} pixels are ice, {1} are water'.format(total_ice,total_water)
                 pythonaddins.MessageBox(msg, 'Ice Abundance')
                 # if the file is not a raster, print an error message 
             else:
@@ -55,3 +56,4 @@ class Water_count(object):
             #if the user fails to select a layer, print an error message 
         else: 
             pythonaddins.MessageBox('Please select a layer.', 'Error')
+
