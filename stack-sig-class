@@ -56,16 +56,18 @@ class StackTool(object):
         """The source code of the tool."""
         foldername = parameters[0].valueAsText
         output = parameters[1].valueAsText
-         #set the workspace as the geodatabase
+    #set the workspace as the folder containing the band TIFs
         arcpy.env.workspace = foldername
     #find all TIF Files
         bands = arcpy.ListRasters("*", "TIF")
         new_bands = []
+    #Include only the bands you want - bands 1-7 and 9
         for band in bands:
             if not 'BQA' in band and not 'B8' in band and not 'B10' in band and not 'B11' in band:
                 new_bands.append(band)
         for band in new_bands:
             messages.addMessage(band)
+    #stacked the desiered bands together to create a stacked, complete image of the area 
         arcpy.CompositeBands_management(new_bands, output)
 
         return
@@ -78,14 +80,14 @@ class SignatureTool(object):
         self.canRunInBackground = False
     def getParameterInfo(self):
         """Define parameter definitions"""
-         # stacked file 
+         # stacked file - TIF
         param0 = arcpy.Parameter(
             displayName="Input Image (Stacked File)",
             name="input_image",
             datatype=["DEFile"],
             parameterType="Required",
             direction="Input")
-        #output parameter - signature file 
+        #output parameter - signature file - .gsg file
         param1 = arcpy.Parameter(
             displayName="Signature File",
             name="signatures",
@@ -114,6 +116,7 @@ class SignatureTool(object):
         """The source code of the tool."""
         input_image = parameters[0].valueAsText
         output_image = parameters[1].valueAsText
+      # Use the IsoCluster Tool to create a signature file with three different clusters: ice, water and other 
         IsoCluster(input_image, output_image,3,20,50,15)
 
 
@@ -133,17 +136,18 @@ class ClassificationTool(object):
             datatype=["DEFile"],
             parameterType="Required",
             direction="Input")
+        # signature file - .gsg 
         param1 = arcpy.Parameter(
             displayName="Signature File",
             name="signature file",
             datatype=["DEFile"],
             parameterType="Required",
             direction="Input")
-        #output parameter - signature file 
+        #output parameter - classified file 
         param2 = arcpy.Parameter(
             displayName="Classified File",
             name="MLC file",
-            datatype=["GPRasterDataLayer"],
+            datatype=["DEFile"],
             parameterType="Derived",
             direction="Output")
         params = [param0, param1, param2]
@@ -169,4 +173,5 @@ class ClassificationTool(object):
         input_raster = parameters[0].valueAsText
         sig_file = parameters [1].valueAsText
         output_file = parameters [2].valueAsText
+#pixels classified based on the previously created signature file and the Maximum Likelihood method, which takes into account the likelihood of the pixel’s estimated signature, based on additional data.  
         MLClassify(input_raster, sig_file, output_file) 
