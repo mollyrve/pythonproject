@@ -43,7 +43,7 @@ class Water_count(object):
                 rectExtract= arcpy.sa.ExtractByRectangle(lyr,rectangle_geometry)
             #convert the rectangle to a numpy array 
                 array=arcpy.RasterToNumPyArray(rectExtract)
-#        #define what operation the rectangle should compute regarding the pixels, make it a percent 
+#        #define what operation the rectangle should compute regarding the pixels. Count both classes of pixels 
                 total_ice =(array==3).sum()
                 total_water =(array==2).sum()
 #         #create solution message for the user 
